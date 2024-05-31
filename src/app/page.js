@@ -289,7 +289,7 @@ export default function Home() {
                   key={subIndex}
                   className="mb-6 p-4 border-2 border-[#6F5CE6] rounded-md subdivision-box relative"
                 >
-                  <h3 className="text-sm font-thin mt-2 mb-4 break-words">
+                  <h3 className="text-sm font-thin mt-6 md:mt-2 mb-4 break-words">
                     {subdivision.name}
                   </h3>
                   <button
