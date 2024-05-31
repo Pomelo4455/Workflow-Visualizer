@@ -85,16 +85,12 @@ const TaskGraph = ({ tasks, onTaskClick, filterTokenAddress }) => {
       .append("div")
       .attr("class", "tooltip")
       .style("position", "absolute")
-      .style("background", "#6e5ce639")
+      .style("background", "#6F5CE6")
       .style("padding", "6px")
       .style("border-radius", "10px")
       .style("pointer-events", "none")
       .style("opacity", 0)
       .style("color", "#FFFFFF")
-      .style(
-        "text-shadow",
-        "1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000"
-      );
 
     const node = svg
       .append("g")
