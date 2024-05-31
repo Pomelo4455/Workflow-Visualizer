@@ -1,15 +1,13 @@
-// Importing necessary hooks and libraries
 "use client";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+import TaskGraph from "@/components/TaskGraph";
 
-// Apollo Client setup
 const apolloClient = new ApolloClient({
   uri: "https://api.thegraph.com/subgraphs/name/mimic-fi/v3-mainnet",
   cache: new InMemoryCache(),
 });
 
-// GraphQL query
 const GET_ENVIRONMENT_TASKS = gql`
   {
     environment(
@@ -27,6 +25,29 @@ const GET_ENVIRONMENT_TASKS = gql`
     }
   }
 `;
+
+function useWindowSize() {
+  const [windowSize, setWindowSize] = useState({
+    width: undefined,
+    height: undefined,
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return windowSize;
+}
 
 function howManyBalanceConnectors(tasks) {
   let connectors = new Set();
@@ -46,11 +67,9 @@ function howManyBalanceConnectors(tasks) {
   return connectors;
 }
 
-// Function to group tasks into groups
 function groupTasks(tasks, connectors) {
   let groups = [];
 
-  // Special case for the first group (previousBalanceConnector is all zeros)
   let specialFirstGroup = tasks.filter(
     (task) =>
       task.taskConfig.previousBalanceConnector ===
@@ -64,7 +83,6 @@ function groupTasks(tasks, connectors) {
     });
   }
 
-  // Group tasks based on previousBalanceConnector
   for (let connector of connectors) {
     if (
       connector ===
@@ -84,7 +102,6 @@ function groupTasks(tasks, connectors) {
     }
   }
 
-  // Group tasks based on nextBalanceConnector
   for (let connector of connectors) {
     let group = tasks.filter(
       (task) => task.taskConfig.nextBalanceConnector === connector
@@ -98,7 +115,6 @@ function groupTasks(tasks, connectors) {
     }
   }
 
-  // Special case for the last group (nextBalanceConnector is all zeros)
   let specialLastGroup = tasks.filter(
     (task) =>
       task.taskConfig.nextBalanceConnector ===
@@ -112,7 +128,6 @@ function groupTasks(tasks, connectors) {
     });
   }
 
-  // Create subdivisions within each group
   let finalGroups = groups.map((group) => {
     let subdivisions = [];
 
@@ -157,6 +172,7 @@ export default function Home() {
   const [tokenAddress, setTokenAddress] = useState("");
   const modalRef = useRef();
   const groupRefs = useRef({});
+  const windowSize = useWindowSize();
 
   useEffect(() => {
     apolloClient
@@ -174,9 +190,9 @@ export default function Home() {
       });
   }, []);
 
-  const handleTaskClick = (task) => {
+  const handleTaskClick = useCallback((task) => {
     setSelectedTask(task);
-  };
+  }, []);
 
   const handleTokenAddressChange = (event) => {
     const address = event.target.value;
@@ -190,19 +206,25 @@ export default function Home() {
       return;
     }
     const lowerCaseAddress = address.toLowerCase();
-    const filtered = groups.filter((group) =>
-      group.subdivisions.some((subdivision) =>
-        subdivision.tasks.some(
-          (task) =>
-            (task.taskConfig.recipient &&
-              task.taskConfig.recipient
-                .toLowerCase()
-                .includes(lowerCaseAddress)) ||
-            (task.tokensSource &&
-              task.tokensSource.toLowerCase().includes(lowerCaseAddress))
-        )
-      )
-    );
+    const filtered = groups
+      .map((group) => {
+        const filteredSubdivisions = group.subdivisions
+          .map((subdivision) => {
+            const filteredTasks = subdivision.tasks.filter(
+              (task) =>
+                (task.taskConfig.recipient &&
+                  task.taskConfig.recipient
+                    .toLowerCase()
+                    .includes(lowerCaseAddress)) ||
+                (task.tokensSource &&
+                  task.tokensSource.toLowerCase().includes(lowerCaseAddress))
+            );
+            return { ...subdivision, tasks: filteredTasks };
+          })
+          .filter((subdivision) => subdivision.tasks.length > 0);
+        return { ...group, subdivisions: filteredSubdivisions };
+      })
+      .filter((group) => group.subdivisions.length > 0);
     setFilteredGroups(filtered);
   };
 
@@ -235,14 +257,13 @@ export default function Home() {
         ? `Next Balance Connector-${connector}`
         : `Previous Balance Connector-${connector}`;
 
-    // Find the correct group element
     const groupElement = groupRefs.current[targetGroup];
     if (groupElement) {
       groupElement.classList.add("highlight");
       groupElement.scrollIntoView({ behavior: "smooth" });
       setTimeout(() => {
         groupElement.classList.remove("highlight");
-      }, 2000); // Remove the highlight after 2 seconds
+      }, 2000);
     }
   };
 
@@ -273,6 +294,17 @@ export default function Home() {
           />
         </div>
       </div>
+
+      <div className="w-full h-fit flex items-center justify-center">
+        {windowSize.width >= 1000 && (
+          <TaskGraph
+            tasks={tasks}
+            onTaskClick={handleTaskClick}
+            filterTokenAddress={tokenAddress}
+          />
+        )}
+      </div>
+
       <div className="mx-10 px-4 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredGroups.map((group, groupIndex) => (
@@ -343,9 +375,19 @@ export default function Home() {
                   <span className="font-bold">Next Balance Connector:</span>{" "}
                   {selectedTask.taskConfig.nextBalanceConnector}
                 </p>
-                <p>
+                <p className="mb-2">
                   <span className="font-bold">Previous Balance Connector:</span>{" "}
                   {selectedTask.taskConfig.previousBalanceConnector}
+                </p>
+                <p className="mb-2">
+                  <span className="font-bold">Tokens Source: </span>{" "}
+                  {selectedTask.tokensSource}
+                </p>
+                <p className="mb-2">
+                  <span className="font-bold">Recipient: </span>{" "}
+                  {selectedTask.taskConfig.recipient
+                    ? "selectedTask.taskConfig.recipient"
+                    : "No recipient"}
                 </p>
               </div>
             </div>
