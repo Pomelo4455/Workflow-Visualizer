@@ -278,7 +278,7 @@ export default function Home() {
           {filteredGroups.map((group, groupIndex) => (
             <div
               key={groupIndex}
-              className="mb-8 p-4 border-2 border-[#6F5CE6] rounded-lg group-box"
+              className="mb-8 p-4 border-2 border-[#6F5CE6] rounded-md group-box"
               ref={(el) => (groupRefs.current[getUniqueKey(group)] = el)}
             >
               <h2 className="text-md font-thin mb-6 break-words">
@@ -287,7 +287,7 @@ export default function Home() {
               {group.subdivisions.map((subdivision, subIndex) => (
                 <div
                   key={subIndex}
-                  className="mb-6 p-4 border-2 border-[#6F5CE6] rounded-lg subdivision-box relative"
+                  className="mb-6 p-4 border-2 border-[#6F5CE6] rounded-md subdivision-box relative"
                 >
                   <h3 className="text-sm font-thin mt-2 mb-4 break-words">
                     {subdivision.name}
@@ -327,7 +327,7 @@ export default function Home() {
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60">
             <div
               ref={modalRef}
-              className="relative bg-white p-6 rounded-lg shadow-lg"
+              className="relative bg-white p-6 rounded-md shadow-lg"
             >
               <button
                 className="absolute top-1 right-4 text-2xl text-gray-700 hover:text-gray-900 transition-colors duration-200"
