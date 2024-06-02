@@ -25,3 +25,24 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.highlighted {
+  background-color: #6e5ce624;
+  border-color: #ffffff;
+  transition: background-color 0.5s, border-color 0.5s;
+}
+
+@keyframes fadeHighlight {
+  0% {
+    background-color: #6e5ce624;
+    border-color: #ffffff;
+  }
+  100% {
+    background-color: transparent;
+    border-color: #6f5ce6;
+  }
+}
+
+.highlighted.fade {
+  animation: fadeHighlight 1s forwards;
+}
