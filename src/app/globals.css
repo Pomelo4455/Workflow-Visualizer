@@ -27,14 +27,14 @@ body {
 }
 
 .highlighted {
-  background-color: #6e5ce624;
+  background-color: #6e5ce663;
   border-color: #ffffff;
   transition: background-color 0.5s, border-color 0.5s;
 }
 
 @keyframes fadeHighlight {
   0% {
-    background-color: #6e5ce624;
+    background-color: #6e5ce663;
     border-color: #ffffff;
   }
   100% {

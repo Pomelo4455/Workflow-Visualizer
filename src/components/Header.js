@@ -1,6 +1,10 @@
 import React from "react";
 
-const Header = ({ tokenAddress, handleTokenAddressChange }) => (
+const Header = ({
+  tokenAddress,
+  handleTokenAddressChange,
+  setHighlightedGroup,
+}) => (
   <div className="bg-[#121418] flex flex-col md:flex-row w-full h-fit p-4 items-center">
     <a href="https://www.mimic.fi/" target="_blank" rel="noopener noreferrer">
       <img
@@ -15,7 +19,10 @@ const Header = ({ tokenAddress, handleTokenAddressChange }) => (
     <input
       type="text"
       value={tokenAddress}
-      onChange={handleTokenAddressChange}
+      onChange={() => {
+        handleTokenAddressChange();
+        setHighlightedGroup("");
+      }}
       placeholder="Enter a token address"
       className="rounded-lg bg-[#191B23] p-2 px-4 text-white border border-[#191B23] focus:outline-none focus:ring-1 focus:ring-[#6F5CE6] mt-4 md:mt-0"
     />

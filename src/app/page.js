@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useCallback, useRef } from "react";
 import { useTasks } from "@/hooks/useTasks";
+import { useBalances } from "@/hooks/useBalances";
 import useWindowSize from "@/hooks/useWindowSize";
 import Header from "@/components/Header";
 import TaskGraphWrapper from "@/components/TaskGraphWrapper";
@@ -8,56 +9,35 @@ import TaskList from "@/components/TaskList";
 import TaskModal from "@/components/TaskModal";
 
 export default function Home() {
-  const { tasks, groups, filteredGroups, setFilteredGroups } = useTasks();
+  const { tasks, groups } = useTasks();
+  const { balances, tokens } = useBalances();
   const [selectedTask, setSelectedTask] = useState(null);
   const [tokenAddress, setTokenAddress] = useState("");
   const [highlightedGroup, setHighlightedGroup] = useState(null);
   const windowSize = useWindowSize();
   const groupRefs = useRef({});
 
+  console.log("balances: ", balances);
+  console.log("tokens: ", tokens);
+  console.log("tasks", tasks);
+
   const handleTaskClick = useCallback((task) => {
     setSelectedTask(task);
   }, []);
 
-  const handleTokenAddressChange = (event) => {
-    const address = event.target.value;
-    setTokenAddress(address);
-    filterGroups(address);
+  const handleTokenSelectChange = (event) => {
+    setHighlightedGroup("");
+    const tokenId = event.target.value;
+    setTokenAddress(tokenId);
   };
 
-  const filterGroups = (address) => {
-    if (!address) {
-      setFilteredGroups(groups);
-      return;
-    }
-    const lowerCaseAddress = address.toLowerCase();
-    const filtered = groups
-      .map((group) => {
-        const filteredSubdivisions = group.subdivisions
-          .map((subdivision) => {
-            const filteredTasks = subdivision.tasks.filter(
-              (task) =>
-                (task.taskConfig.recipient &&
-                  task.taskConfig.recipient
-                    .toLowerCase()
-                    .includes(lowerCaseAddress)) ||
-                (task.tokensSource &&
-                  task.tokensSource.toLowerCase().includes(lowerCaseAddress))
-            );
-            return { ...subdivision, tasks: filteredTasks };
-          })
-          .filter((subdivision) => subdivision.tasks.length > 0);
-        return { ...group, subdivisions: filteredSubdivisions };
-      })
-      .filter((group) => group.subdivisions.length > 0);
-    setFilteredGroups(filtered);
+  const handleReset = () => {
+    setHighlightedGroup("");
+    setTokenAddress("");
   };
 
-  const handleHighlightGroup = (connector, groupBy) => {
-    const targetGroup =
-      groupBy === "previousBalanceConnector"
-        ? `Next Balance Connector-${connector}`
-        : `Previous Balance Connector-${connector}`;
+  const handleHighlightGroup = (connector) => {
+    const targetGroup = `Balance Connector-${connector}`;
 
     const groupElement = groupRefs.current[targetGroup];
     if (groupElement) {
@@ -78,23 +58,30 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#191B23] text-white overflow-x-hidden">
+    <div className="min-h-screen -mb-3 bg-[#191B23] text-white">
       <Header
         tokenAddress={tokenAddress}
-        handleTokenAddressChange={handleTokenAddressChange}
+        handleTokenAddressChange={handleTokenSelectChange}
+        setHighlightedGroup={setHighlightedGroup}
       />
       <TaskGraphWrapper
         tasks={tasks}
         onTaskClick={handleTaskClick}
+        handleHighlightGroup={handleHighlightGroup}
         windowSize={windowSize}
         tokenAddress={tokenAddress}
+        balances={balances}
       />
       <TaskList
-        filteredGroups={filteredGroups}
+        groups={groups}
         handleTaskClick={handleTaskClick}
-        handleHighlightGroup={handleHighlightGroup}
         setGroupRef={handleSetGroupRefs}
-        highlightedGroup={highlightedGroup} // Pass the highlighted group state
+        highlightedGroup={highlightedGroup}
+        tokenAddress={tokenAddress}
+        balances={balances}
+        handleTokenSelectChange={handleTokenSelectChange}
+        tokens={tokens}
+        handleReset={handleReset}
       />
       <TaskModal
         selectedTask={selectedTask}

@@ -1,34 +1,86 @@
 import React from "react";
+import TokensSelect from "./TokensSelect";
 import "../app/globals.css";
 
 const TaskList = ({
-  filteredGroups,
+  groups,
   handleTaskClick,
-  handleHighlightGroup,
   setGroupRef,
   highlightedGroup,
+  tokenAddress,
+  balances,
+  handleTokenSelectChange,
+  tokens,
+  handleReset,
 }) => {
   const getUniqueKey = (group) => {
     const [type, value] = group.name.split(": ");
-    return `${type.trim()}-${value.trim()}`;
+    return {
+      fullKey: `${type.trim()}-${value.trim()}`,
+      connectorKey: value.trim(),
+    };
   };
+  
+  const formatTokenAmount = (amount, decimals) => {
+    return (amount / Math.pow(10, decimals)).toLocaleString();
+  };
+
+  console.log("TOKENADDRESS", tokenAddress);
+  console.log("BALANCES", balances);
 
   return (
     <div className="mx-10 px-4 py-8">
+      <TokensSelect
+        handleTokenSelectChange={handleTokenSelectChange}
+        tokens={tokens}
+        tokenAddress={tokenAddress}
+        handleReset={handleReset}
+      />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredGroups.map((group, groupIndex) => {
-          const groupKey = getUniqueKey(group);
+        {groups.map((group, groupIndex) => {
+          const { fullKey, connectorKey } = getUniqueKey(group);
+          const balanceConnector = balances.find(
+            (balanceConnector) => balanceConnector.connector === connectorKey
+          );
+
+          // Filter balance connectors based on the tokenAddress
+          const tokenBalances = balanceConnector
+            ? balanceConnector.balances.filter(
+                (bal) => bal.token.id === tokenAddress
+              )
+            : [];
+
+          if (tokenAddress && tokenBalances.length === 0) {
+            return null; // Skip this group if there are no matching token balances
+          }
+
           return (
             <div
               key={groupIndex}
               className={`mb-8 p-4 border-2 border-[#6F5CE6] rounded-md group-box ${
-                highlightedGroup === groupKey ? "highlighted" : ""
+                highlightedGroup === fullKey ? "highlighted" : ""
               }`}
-              ref={(el) => setGroupRef(groupKey, el)}
+              ref={(el) => setGroupRef(fullKey, el)}
             >
               <h2 className="text-md font-thin mb-6 break-words">
                 {group.name}
               </h2>
+              <div className="flex items-center justify-center mb-6">
+                {tokenBalances.map((tokenBalance, index) => (
+                  <div
+                    key={index}
+                    className="bg-[#6F5CE6] p-3 rounded-md text-xl"
+                  >
+                    <span>
+                      {formatTokenAmount(
+                        tokenBalance.amount,
+                        tokenBalance.token.decimals
+                      )}{" "}
+                      {tokenBalance.token.symbol}
+                    </span>
+                  </div>
+                ))}
+              </div>
               {group.subdivisions.map((subdivision, subIndex) => (
                 <div
                   key={subIndex}
@@ -37,21 +89,7 @@ const TaskList = ({
                   <h3 className="text-sm font-thin mt-6 md:mt-2 mb-4 break-words">
                     {subdivision.name}
                   </h3>
-                  <button
-                    className="absolute top-2 right-2 bg-[#6e5ce639] hover:bg-[#6F5CE6] text-white rounded-sm py-0.5 px-3 cursor-pointer transition-colors duration-200"
-                    onClick={() =>
-                      handleHighlightGroup(
-                        group.groupBy === "previousBalanceConnector"
-                          ? subdivision.tasks[0].taskConfig.nextBalanceConnector
-                          : subdivision.tasks[0].taskConfig
-                              .previousBalanceConnector,
-                        group.groupBy
-                      )
-                    }
-                  >
-                    Highlight
-                  </button>
-                  <div className="flex flex-wrap justify-center sm:justify-start gap-4 py-4">
+                  <div className="flex flex-wrap justify-center sm:justify-start gap-4 py-1">
                     {subdivision.tasks.map((task, index) => (
                       <button
                         key={index}

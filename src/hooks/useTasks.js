@@ -16,10 +16,8 @@ const GET_ENVIRONMENT_TASKS = gql`
         taskConfig {
           nextBalanceConnector
           previousBalanceConnector
-          recipient
         }
         name
-        tokensSource
       }
     }
   }
@@ -28,7 +26,6 @@ const GET_ENVIRONMENT_TASKS = gql`
 export const useTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [groups, setGroups] = useState([]);
-  const [filteredGroups, setFilteredGroups] = useState([]);
 
   useEffect(() => {
     apolloClient
@@ -39,12 +36,11 @@ export const useTasks = () => {
         const connectors = howManyBalanceConnectors(fetchedTasks);
         const groups = groupTasks(fetchedTasks, connectors);
         setGroups(groups);
-        setFilteredGroups(groups);
       })
       .catch((error) => {
         console.error("Error fetching tasks:", error);
       });
   }, []);
 
-  return { tasks, groups, filteredGroups, setFilteredGroups };
+  return { tasks, groups };
 };

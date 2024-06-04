@@ -47,16 +47,6 @@ const TaskModal = ({ selectedTask, setSelectedTask }) => {
             <span className="font-bold">Previous Balance Connector:</span>{" "}
             {selectedTask.taskConfig.previousBalanceConnector}
           </p>
-          <p className="mb-2">
-            <span className="font-bold">Tokens Source: </span>{" "}
-            {selectedTask.tokensSource}
-          </p>
-          <p className="mb-2">
-            <span className="font-bold">Recipient: </span>{" "}
-            {selectedTask.taskConfig.recipient
-              ? selectedTask.taskConfig.recipient
-              : "No recipient"}
-          </p>
         </div>
       </div>
     </div>
