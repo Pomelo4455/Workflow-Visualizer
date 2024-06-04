@@ -21,8 +21,8 @@ const TaskGraph = ({ tasks, onTaskClick, handleHighlightGroup }) => {
           prevConnectorId ===
           "0x0000000000000000000000000000000000000000000000000000000000000000"
         ) {
-          nodes.push({ id: "Initiation", type: "balance" });
-          links.push({ source: "Initiation", target: taskId });
+          nodes.push({ id: "Start", type: "balance" });
+          links.push({ source: "Start", target: taskId });
         } else {
           nodes.push({ id: prevConnectorId, type: "balance" });
           links.push({ source: prevConnectorId, target: taskId });
@@ -32,8 +32,8 @@ const TaskGraph = ({ tasks, onTaskClick, handleHighlightGroup }) => {
           nextConnectorId ===
           "0x0000000000000000000000000000000000000000000000000000000000000000"
         ) {
-          nodes.push({ id: "Completion", type: "balance" });
-          links.push({ source: taskId, target: "Completion" });
+          nodes.push({ id: "End", type: "balance" });
+          links.push({ source: taskId, target: "End" });
         } else {
           nodes.push({ id: nextConnectorId, type: "balance" });
           links.push({ source: taskId, target: nextConnectorId });
@@ -130,6 +130,11 @@ const TaskGraph = ({ tasks, onTaskClick, handleHighlightGroup }) => {
             onTaskClick(d.task);
             tooltip.transition().duration(500).style("opacity", 0);
           } else {
+            if (d.id === "Start" || d.id === "End") {
+              handleHighlightGroup(
+                "0x0000000000000000000000000000000000000000000000000000000000000000"
+              );
+            }
             handleHighlightGroup(d.id);
             tooltip.transition().duration(500).style("opacity", 0);
           }

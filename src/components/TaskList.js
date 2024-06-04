@@ -20,13 +20,10 @@ const TaskList = ({
       connectorKey: value.trim(),
     };
   };
-  
+
   const formatTokenAmount = (amount, decimals) => {
     return (amount / Math.pow(10, decimals)).toLocaleString();
   };
-
-  console.log("TOKENADDRESS", tokenAddress);
-  console.log("BALANCES", balances);
 
   return (
     <div className="mx-10 px-4 py-8">

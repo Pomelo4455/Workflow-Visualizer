@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import TaskGraphWrapper from "@/components/TaskGraphWrapper";
 import TaskList from "@/components/TaskList";
 import TaskModal from "@/components/TaskModal";
+import TokensSelect from "@/components/TokensSelect";
 
 export default function Home() {
   const { tasks, groups } = useTasks();
@@ -16,10 +17,6 @@ export default function Home() {
   const [highlightedGroup, setHighlightedGroup] = useState(null);
   const windowSize = useWindowSize();
   const groupRefs = useRef({});
-
-  console.log("balances: ", balances);
-  console.log("tokens: ", tokens);
-  console.log("tasks", tasks);
 
   const handleTaskClick = useCallback((task) => {
     setSelectedTask(task);
@@ -57,13 +54,11 @@ export default function Home() {
     groupRefs.current[groupKey] = element;
   };
 
+  console.log(tokens);
+
   return (
     <div className="min-h-screen -mb-3 bg-[#191B23] text-white">
-      <Header
-        tokenAddress={tokenAddress}
-        handleTokenAddressChange={handleTokenSelectChange}
-        setHighlightedGroup={setHighlightedGroup}
-      />
+      <Header />
       <TaskGraphWrapper
         tasks={tasks}
         onTaskClick={handleTaskClick}
@@ -86,6 +81,7 @@ export default function Home() {
       <TaskModal
         selectedTask={selectedTask}
         setSelectedTask={setSelectedTask}
+        tokens={tokens}
       />
     </div>
   );

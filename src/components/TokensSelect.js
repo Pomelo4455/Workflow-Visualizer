@@ -6,7 +6,7 @@ const TokensSelect = ({
   tokenAddress,
   handleReset,
 }) => (
-  <div className="w-full flex flex-col sm:flex-row justify-center items-center p-4">
+  <div className="w-full flex flex-col lg:flex-row justify-center items-center p-4">
     <label
       htmlFor="token-select"
       className="block mr-2 mb-2 sm:mb-0 text-white"
@@ -17,7 +17,7 @@ const TokensSelect = ({
       id="token-select"
       value={tokenAddress}
       onChange={handleTokenSelectChange}
-      className="p-2 bg-[#191B23] text-white rounded border border-[#6F5CE6] focus:outline-none focus:ring-2 focus:ring-[#6F5CE6] w-full md:w-auto"
+      className="p-2 bg-[#191B23] text-white rounded border border-[#6F5CE6] mr-2 focus:outline-none focus:ring-2 focus:ring-[#6F5CE6] w-full md:w-auto"
     >
       <option value="">Select a token</option>
       {tokens.map((token) => (
@@ -28,10 +28,17 @@ const TokensSelect = ({
     </select>
     <button
       onClick={handleReset}
-      className="mt-2 sm:mt-0 sm:ml-4 p-2 bg-[#6F5CE6] text-white rounded border border-[#6F5CE6] focus:outline-none focus:ring-2 focus:ring-[#6F5CE6]"
+      className="sm:mt-0 lg:ml-2 p-1.5 bg-[#6F5CE6] text-white rounded lg:rounded-r-none border border-[#6F5CE6] focus:outline-none lg:transform lg:hover:-translate-x-0.5"
     >
       Reset
     </button>
+    <input
+      type="text"
+      value={tokenAddress}
+      onChange={handleTokenSelectChange}
+      placeholder="Enter a token address"
+      className="rounded lg:rounded-r-lg bg-[#191B23] p-1.5 px-4 text-white border-[#6F5CE6] lg:rounded-l-none focus:outline-none focus:ring-1 focus:ring-[#6F5CE6] md:mt-0"
+    />
   </div>
 );
 

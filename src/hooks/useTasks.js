@@ -18,6 +18,7 @@ const GET_ENVIRONMENT_TASKS = gql`
           previousBalanceConnector
         }
         name
+        id
       }
     }
   }
