@@ -28,7 +28,7 @@ const TokensSelect = ({
     </select>
     <button
       onClick={handleReset}
-      className="sm:mt-0 lg:ml-2 p-1.5 bg-[#6F5CE6] text-white rounded lg:rounded-r-none border border-[#6F5CE6] focus:outline-none lg:transform lg:hover:-translate-x-0.5"
+      className="lg:mt-0 mt-2 lg:ml-2 p-1.5 bg-[#6F5CE6] text-white rounded lg:rounded-r-none border border-[#6F5CE6] focus:outline-none lg:transform lg:hover:-translate-x-0.5"
     >
       Reset
     </button>
