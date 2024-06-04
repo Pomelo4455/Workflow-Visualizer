@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { useTaskInfo } from "@/hooks/useTaskInfo"; // Adjust the path as necessary
+import { useTaskInfo } from "@/hooks/useTaskInfo";
 
 const TaskModal = ({ selectedTask, setSelectedTask, tokens }) => {
   const modalRef = useRef();

@@ -12,7 +12,7 @@ const TaskList = ({
   handleTokenSelectChange,
   tokens,
   handleReset,
-  balanceIdToName, // Pass the balanceIdToName mapping as a prop
+  balanceIdToName,
 }) => {
   const getUniqueKey = (group) => {
     const [type, value] = group.name.split(": ");

@@ -7,7 +7,6 @@ import Header from "@/components/Header";
 import TaskGraphWrapper from "@/components/TaskGraphWrapper";
 import TaskList from "@/components/TaskList";
 import TaskModal from "@/components/TaskModal";
-import TokensSelect from "@/components/TokensSelect";
 
 export default function Home() {
   const { tasks, groups } = useTasks();
@@ -93,8 +92,6 @@ export default function Home() {
     groupRefs.current[groupKey] = element;
   };
 
-  console.log(tokens);
-
   return (
     <div className="min-h-screen -mb-3 bg-[#191B23] text-white">
       <Header />
@@ -105,7 +102,7 @@ export default function Home() {
         windowSize={windowSize}
         tokenAddress={tokenAddress}
         balances={balances}
-        balanceIdToName={balanceIdToName} // Pass balanceIdToName prop
+        balanceIdToName={balanceIdToName}
       />
       <TaskList
         groups={groups}
@@ -117,7 +114,7 @@ export default function Home() {
         handleTokenSelectChange={handleTokenSelectChange}
         tokens={tokens}
         handleReset={handleReset}
-        balanceIdToName={balanceIdToName} // Pass balanceIdToName prop
+        balanceIdToName={balanceIdToName}
       />
       <TaskModal
         selectedTask={selectedTask}

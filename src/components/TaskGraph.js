@@ -252,7 +252,7 @@ const TaskGraph = ({ tasks, onTaskClick, handleHighlightGroup }) => {
         simulationRef.current = null;
       }
     };
-  }, [tasks]); // Add dependencies array to control when the effect runs
+  }, [tasks]);
 
   return <svg ref={svgRef}></svg>;
 };
