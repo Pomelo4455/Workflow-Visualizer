@@ -8,6 +8,7 @@ const TaskGraphWrapper = ({
   windowSize,
   tokenAddress,
   balances,
+  balanceIdToName, // Receive balanceIdToName prop
 }) => (
   <div className="w-full h-fit flex items-center justify-center">
     {windowSize.width >= 1000 && (
@@ -15,8 +16,9 @@ const TaskGraphWrapper = ({
         tasks={tasks}
         onTaskClick={onTaskClick}
         handleHighlightGroup={handleHighlightGroup}
-        tokenAddress={tokenAddress} // Pass tokenAddress prop
-        balances={balances} // Pass balances prop
+        tokenAddress={tokenAddress}
+        balances={balances}
+        balanceIdToName={balanceIdToName} // Pass balanceIdToName prop
       />
     )}
   </div>

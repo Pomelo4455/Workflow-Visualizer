@@ -12,6 +12,7 @@ const TaskList = ({
   handleTokenSelectChange,
   tokens,
   handleReset,
+  balanceIdToName, // Pass the balanceIdToName mapping as a prop
 }) => {
   const getUniqueKey = (group) => {
     const [type, value] = group.name.split(": ");
@@ -62,6 +63,11 @@ const TaskList = ({
               <h2 className="text-md font-thin mb-6 break-words">
                 {group.name}
               </h2>
+              {balanceIdToName[connectorKey] && (
+                <div className="text-left text-lg font-bold mb-2 rounded-full border-2 border-[#6F5CE6] w-fit px-2">
+                  {balanceIdToName[connectorKey]}{" "}
+                </div>
+              )}
               <div className="flex items-center justify-center mb-6">
                 {tokenBalances.map((tokenBalance, index) => (
                   <div

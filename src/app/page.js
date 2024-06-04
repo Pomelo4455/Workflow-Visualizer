@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useTasks } from "@/hooks/useTasks";
 import { useBalances } from "@/hooks/useBalances";
 import useWindowSize from "@/hooks/useWindowSize";
@@ -15,8 +15,47 @@ export default function Home() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [tokenAddress, setTokenAddress] = useState("");
   const [highlightedGroup, setHighlightedGroup] = useState(null);
+  const [balanceIdToName, setBalanceIdToName] = useState({});
   const windowSize = useWindowSize();
   const groupRefs = useRef({});
+
+  useEffect(() => {
+    const generateBalanceIdToName = () => {
+      const balanceIdToName = {};
+      let currentLetterCode = 65; // ASCII code for 'A'
+
+      tasks.forEach((task) => {
+        const prevConnectorId = task.taskConfig.previousBalanceConnector;
+        const nextConnectorId = task.taskConfig.nextBalanceConnector;
+
+        if (
+          prevConnectorId !==
+          "0x0000000000000000000000000000000000000000000000000000000000000000"
+        ) {
+          if (!balanceIdToName[prevConnectorId]) {
+            balanceIdToName[prevConnectorId] = String.fromCharCode(
+              currentLetterCode++
+            );
+          }
+        }
+
+        if (
+          nextConnectorId !==
+          "0x0000000000000000000000000000000000000000000000000000000000000000"
+        ) {
+          if (!balanceIdToName[nextConnectorId]) {
+            balanceIdToName[nextConnectorId] = String.fromCharCode(
+              currentLetterCode++
+            );
+          }
+        }
+      });
+
+      setBalanceIdToName(balanceIdToName);
+    };
+
+    generateBalanceIdToName();
+  }, [tasks]);
 
   const handleTaskClick = useCallback((task) => {
     setSelectedTask(task);
@@ -66,6 +105,7 @@ export default function Home() {
         windowSize={windowSize}
         tokenAddress={tokenAddress}
         balances={balances}
+        balanceIdToName={balanceIdToName} // Pass balanceIdToName prop
       />
       <TaskList
         groups={groups}
@@ -77,6 +117,7 @@ export default function Home() {
         handleTokenSelectChange={handleTokenSelectChange}
         tokens={tokens}
         handleReset={handleReset}
+        balanceIdToName={balanceIdToName} // Pass balanceIdToName prop
       />
       <TaskModal
         selectedTask={selectedTask}

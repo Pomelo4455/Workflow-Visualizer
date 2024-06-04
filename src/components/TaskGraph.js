@@ -9,6 +9,8 @@ const TaskGraph = ({ tasks, onTaskClick, handleHighlightGroup }) => {
     const generateNodesAndLinks = (tasks) => {
       const nodes = [];
       const links = [];
+      const balanceIdToName = {};
+      let currentLetterCode = 65; // ASCII code for 'A'
 
       tasks.forEach((task) => {
         const taskId = task.name;
@@ -24,7 +26,16 @@ const TaskGraph = ({ tasks, onTaskClick, handleHighlightGroup }) => {
           nodes.push({ id: "Start", type: "balance" });
           links.push({ source: "Start", target: taskId });
         } else {
-          nodes.push({ id: prevConnectorId, type: "balance" });
+          if (!balanceIdToName[prevConnectorId]) {
+            balanceIdToName[prevConnectorId] = String.fromCharCode(
+              currentLetterCode++
+            );
+          }
+          nodes.push({
+            id: prevConnectorId,
+            name: balanceIdToName[prevConnectorId],
+            type: "balance",
+          });
           links.push({ source: prevConnectorId, target: taskId });
         }
 
@@ -35,7 +46,16 @@ const TaskGraph = ({ tasks, onTaskClick, handleHighlightGroup }) => {
           nodes.push({ id: "End", type: "balance" });
           links.push({ source: taskId, target: "End" });
         } else {
-          nodes.push({ id: nextConnectorId, type: "balance" });
+          if (!balanceIdToName[nextConnectorId]) {
+            balanceIdToName[nextConnectorId] = String.fromCharCode(
+              currentLetterCode++
+            );
+          }
+          nodes.push({
+            id: nextConnectorId,
+            name: balanceIdToName[nextConnectorId],
+            type: "balance",
+          });
           links.push({ source: taskId, target: nextConnectorId });
         }
       });
@@ -142,7 +162,11 @@ const TaskGraph = ({ tasks, onTaskClick, handleHighlightGroup }) => {
         .on("mouseover", (event, d) => {
           tooltip.transition().duration(200).style("opacity", 0.9);
           tooltip
-            .html(d.id)
+            .html(
+              d.type === "balance" && d.id !== "Start" && d.id !== "End"
+                ? d.name
+                : d.id
+            )
             .style("left", event.pageX + 5 + "px")
             .style("top", event.pageY - 28 + "px");
         })
